@@ -12,10 +12,7 @@ class Block {
     this.height = 0; //bloques dentro de la 
     this.heighEnterprise = 0; //bloques dentro de la cadena
     this.body = Buffer.from(JSON.stringify(data).toString("hex")); //datos para encriptarlos lo convertimos en string y en exadecimal
-    this.permisos = {
-      envioFacturacion : null,
-      machineLearning :null //permisos
-    },
+    this.permisos= [{tipo: "", valor: null}],
     this.userId = ""; //idUsuario
     this.enterpriseId =""//idEmpresa
     this.fechaModificacion = ""

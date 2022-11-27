@@ -9,10 +9,7 @@ const BlockchainSchema = new Schema({
     heigh: { type: Number, require: [true, 'heigh'] },
     heighEnterprise: { type: Number, require: [true, 'heigh'] },
     body: { type: String, require: [true, 'body'] },
-    permisos:{
-        envioFacturacion: {type: Boolean},
-        machineLearning: {type: Boolean},
-    },
+    permisos: [{tipo: {type: String}, valor: {type:Boolean}}],
     userId: { type: mongoose.Types.ObjectId, required: true, ref: 'user' },
     enterpriseId: { type: mongoose.Types.ObjectId, required: true, ref: 'enterprise' },
     fechaModificacion: {type: String},

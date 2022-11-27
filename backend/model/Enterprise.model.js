@@ -7,7 +7,7 @@ const EnterpriseSchema = new Schema({
     email: { type: String, require: [true, 'Email requerido'] },
     ruc: { type: String, require: [true, 'Contraseña requerido'] },
     password: { type: String },
-    users: [{ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'user' }],    
+   
     
 }, {
 

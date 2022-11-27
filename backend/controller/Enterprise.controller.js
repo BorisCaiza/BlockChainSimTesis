@@ -4,6 +4,8 @@ const EmailModel = require('../model/Email.model')
 const UserModal = require("../model/User.model")
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
+const BlockchainModal = require('../model/Blockchain.modal');
+const ConsentModel = require('../model/Consent.model');
 
 
 
@@ -119,8 +121,9 @@ EnterpriseCtrl.updateEnterprise = async (req, res) => {
 //Enviar email a un usuario
 EnterpriseCtrl.sendEmail = async (req, res) => {
 
-    let { email, descripcionConsentimeinto, envioFacturacion, machineLearning, fechaFin, observaciones } = req.body;
+    let { email, descripcionConsentimeinto, permisos , fechaFin, observaciones } = req.body;
 
+    console.log(permisos)
     var idEmpresa = req.params.id
 
     let empresa = await EnterpriseModel.findById(idEmpresa)
@@ -136,17 +139,18 @@ EnterpriseCtrl.sendEmail = async (req, res) => {
                 let idUsuario = usuario._id
 
                 const NewEmail = new EmailModel({
-
-                    idEmpresa: idEmpresa,
+                    empresa: { 
+                        id: empresa._id, 
+                        name: empresa.name 
+                    },
+                    usuario: { 
+                        id: usuario._id,
+                        name: usuario.name
+                    },
                     idUsuario: idUsuario,
                     descripcionConcentimiento: descripcionConsentimeinto,
-                    permisos: {
-                        envioFacturacion: envioFacturacion,
-                        machineLearning: machineLearning,
-                        fechaFin: fechaFin,
-                    },
-
-                  
+                    permisos: permisos,
+                    fechaFin: fechaFin,
                     obsevaciones: observaciones
 
 
@@ -183,6 +187,62 @@ EnterpriseCtrl.sendEmail = async (req, res) => {
         })
     }
 }
+
+
+//Coger solo los emails respondidos y los permisos
+
+EnterpriseCtrl.getUsers = async(req,res)=>{
+
+    console.log(req.params.id)
+    
+    let users = await ConsentModel.find({"empresa.id" :req.params.id})
+
+    if(users.length > 0) {
+
+        res.send(users)
+
+    }else{
+        res.send({
+            status:"No existen consentimeintos"
+        })
+    }
+
+    
+
+}
+
+//Login
+
+EnterpriseCtrl.login = async (req, res) => {
+
+    const { email, password } = req.body
+
+    const enterprise = await EnterpriseModel.findOne({ email: email })
+
+    const passwordCorrect = enterprise === null
+      ? false
+      : await bcrypt.compare(password, enterprise.password)
+  
+    if (!(enterprise && passwordCorrect)) {
+      return res.status(401).json({
+        error: 'correo o contraseña invalida'
+      })
+    }
+  
+    const enterpriseForToken = {
+      email: enterprise.email,
+      id: enterprise._id,
+      name: enterprise.name
+    }
+  
+    const token = jwt.sign(enterpriseForToken, "secreto")
+  
+    res
+      .status(200)
+      .send({ token, enterprise })
+
+}
+
 
 
 

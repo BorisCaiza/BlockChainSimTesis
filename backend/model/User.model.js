@@ -8,10 +8,8 @@ const UserSchema = new Schema({
     email: { type: String, require: [true, 'Email requerido'] },
     ci: { type: String, require: [true, 'Contraseña requerido'] },
     password: { type: String },
-    enterprises: [{ type: mongoose.Schema.Types.ObjectId, required: true, ref: 'enterprise' }],
     
-}, {
-    timestamps: true
+    
 });
 
 UserSchema.methods.setImage = function setImage (filename) {
